@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 
 import './App.css';
+import TSDailyGraph from './components/TSDailyGraph.js';
 
 class App extends Component {
   state = {
@@ -55,6 +56,7 @@ render() {
         </header>
         <p>{this.state.response}</p>
         <p>{this.state.responseToPost}</p>
+        <TSDailyGraph/>
       </div>
     );
   }
