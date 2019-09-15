@@ -14,19 +14,40 @@ class App extends Component {
     this.callApi()
       .then(res => this.setState({ response: res.express }))
       .catch(err => console.log(err));
+
+
   }
 
   callApi = async () => {
-    const response = await fetch('/api/hello');
-    const body = await response.json();
-    if (response.status !== 200) throw Error(body.message);
+    //TEST
+    const response = await fetch('/api/timeseries', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ post: 'MSFT' }),
+    });
+    const body = await response.text();
+    debugger;
+    var tsdata = JSON.parse(body)['Monthly Time Series'];
 
-    return body;
+    let keys = Object.keys(tsdata);
+
+    var tsarray = [];
+    keys.forEach(currDate => {
+      let ts = tsdata[currDate];
+      var data = ts;
+      data.date = currDate;
+      tsarray.push(data);
+    });
+
+    this.setState({ responseToPost: JSON.stringify(tsarray.reverse()) });
+    //TEST END
   };
 
   handleSubmit = async e => {
     e.preventDefault();
-    const response = await fetch('/api/world', {
+    const response = await fetch('/api/timeseries', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -39,26 +60,32 @@ class App extends Component {
   };
 
 render() {
-    return (
-      <div className="App">
-        <header className="App-header">
-          <p>
-          <form onSubmit={this.handleSubmit}>
-            <input
-              type="text"
-              value={this.state.post}
-              onChange={e => this.setState({ post: e.target.value })}
-            />
-            <button type="submit">Submit</button>
-          </form>
-            Edit <code>src/App.js</code> and dont save to reload.
-          </p>
-        </header>
-        <p>{this.state.response}</p>
-        <p>{this.state.responseToPost}</p>
-        <TSDailyGraph/>
-      </div>
-    );
+    if(this.state.responseToPost === ''){
+      return (
+        <div className="App">
+          <header className="App-header">
+            <p>
+            <form onSubmit={this.handleSubmit}>
+              <input
+                type="text"
+                value={this.state.post}
+                onChange={e => this.setState({ post: e.target.value })}
+              />
+              <button type="submit">Submit</button>
+            </form>
+              Edit <code>src/App.js</code> and dont save to reload.
+            </p>
+          </header>
+          <p>{this.state.response}</p>
+        </div>
+      );
+    }else{
+      return(
+        <div className="App">
+          <TSDailyGraph data={JSON.parse(this.state.responseToPost)}/>
+        </div>
+      )
+    }
   }
 }
 

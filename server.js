@@ -11,24 +11,20 @@ app.get('/api/hello', (req, res) => {
   res.send({ express: 'Hello From Express' });
 });
 
-app.post('/api/world', (req, res) => {
-  // console.log(req.body);
-  // res.send(
-  //   `I received your POST request. This is what you sent me: ${req.body.post}`,
-  // );
+app.post('/api/timeseries', (req, res) => {
   var request = require('request');
   var options = { method: 'GET',
     url: 'https://www.alphavantage.co/query',
     qs:
-     { function: 'TIME_SERIES_DAILY',
+     { function: 'TIME_SERIES_MONTHLY',
        symbol: req.body.post,
        apikey: 'M88X3Y65YYJRDM0I' }};
 
   request(options, function (error, response, body) {
     if (error) throw new Error(error);
-
-  res.send(body);
+    res.send(body);
 });
+
 
 });
 
