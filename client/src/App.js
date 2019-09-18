@@ -25,7 +25,7 @@ class App extends Component {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ post: 'MSFT' }),
+      body: JSON.stringify({ post: 'SPY' }),
     });
     const body = await response.text();
     debugger;
