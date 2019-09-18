@@ -19,61 +19,49 @@ class TSDailyGraph extends Component {
 
   drawChart(){
     const tsdata = this.state.data;
-
-    const max = Math.max.apply(Math, tsdata.map(function(o) { return o['2. high']; }))
-    const min = Math.min.apply(Math, tsdata.map(function(o) { return o['3. low']; }))
-
+    const data = [{val: 1}, {val: 2}, {val: 3}, {val: 4}, {val: 5}];
+    // const data = [1,2,3,4,5];
     const w = '100%';
-    const h = 600;
-    const vertScale = h/max;
-    const horiScale = 6;
-    const leftMargin = 50;
+    const h = 500;
 
-    const candle = d3.select(".chartContainer")
-      .append("svg")
-      .attr("width", w)
-      .attr("height", h)
-      .attr("margin-left", 100);
+    const candle = d3.select("body")
+    .append("svg")
+    .attr("width", w)
+    .attr("height", h)
+    .style("margin-left", 100);
 
-    candle.selectAll("rect")
+    // svga.selectAll("rect")
+    //   .data(data)
+    //   .enter()
+    //   .append("rect")
+    //   .attr("x", (d, i) => i * 70)
+    //   .attr("y", (d, i) => h - 10 * d.val)
+    //   .attr("width", 65)
+    //   .attr("height", (d, i) => d.val * 10)
+    //   .attr("fill", "green")
+    //   .attr("id", (d, i) => JSON.stringify(d.val))
+      candle.selectAll("rect")
         .data(tsdata)
         .enter()
         .append("rect")
-        .attr("x", (d, i) => i * (horiScale + 1) + leftMargin)
-        .attr("y", (d, i) => h - vertScale * d3.max([d['1. open'], d['4. close']]))
-        .attr("width", horiScale)
-        .attr("height", (d, i) => vertScale * Math.abs(d['1. open'] - d['4. close']))
-        .attr("fill", (d, i) => d['1. open'] > d['4. close'] ? "red" : "green")
-        .attr("id", (d, i) => d3.max([d['1. open'], d['4. close']]));
+        .attr("x", (d, i) => i * 5)
+        .attr("y", (d, i) => h - 1 * d['1. open'])
+        .attr("width", 3)
+        .attr("height", (d, i) => d['1. open'] * 1)
+        .attr("fill", "green")
+        .attr("id", (d, i) => JSON.stringify(i + ': ' + d['date']))
 
-    var yScale = d3.scaleLinear()
-                    .domain([min, max])
-                    .range([h - vertScale * min, h - vertScale * max]);
 
-    var yAxis = d3.axisLeft()
-                    .scale(yScale);
-
-    candle.append("g")
-            .attr("transform", "translate("+leftMargin+", 0)")
-            .attr("color", "white")
-            .call(yAxis);
   }
 
   render(){
     return(
       <div>
-        <div class="chartContainer" style={containerStyle} id="#"></div>
-        <p>TSDailyGrapherino</p>
+      <div id={"#" + this.props.id}></div>
+      <p>TSDailyGraph</p>
       </div>
     )
   }
-}
-
-var containerStyle = {
-    border: "solid 1px",
-    margin: "10px 10px 10px 10px",
-    overflow: "visible",
-    backgroundColor: "#2e394a"
 }
 
 export default TSDailyGraph;
