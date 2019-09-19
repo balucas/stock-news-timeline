@@ -26,6 +26,25 @@ app.post('/api/timeseries', (req, res) => {
     res.send(body);
 });
 
+});
+
+
+app.post('/api/news', (req, res) => {
+  var request = require('request');
+  var options = { method: 'GET',
+    url: 'https://newsapi.org/v2/everything',
+    qs:
+     { q: req.body.q,
+       to: req.body.to,
+       sortBy: 'publishedAt',
+       language: 'en',
+       apikey: 'f235bf3e59564835ac93d2f349c50c4c' }};
+
+  request(options, function (error, response, body) {
+    if (error) throw new Error(error);
+    res.send(body);
+});
+
 
 });
 

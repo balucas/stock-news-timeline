@@ -12,21 +12,21 @@ class App extends Component {
   };
 
   componentDidMount() {
-    this.callApi()
+    this.callApiTimeSeries()
       .then(res => this.setState({ response: res.express }))
       .catch(err => console.log(err));
 
 
   }
 
-  callApi = async () => {
+  callApiTimeSeries = async () => {
     //TEST
     const response = await fetch('/api/timeseries', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ post: 'MSFT' }),
+      body: JSON.stringify({ post: 'BYND', type: 'timeseries' }),
     });
     const body = await response.text();
     var tsdata = JSON.parse(body)['Time Series (60min)'];
