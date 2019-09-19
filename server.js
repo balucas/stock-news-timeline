@@ -16,7 +16,7 @@ app.post('/api/timeseries', (req, res) => {
   var options = { method: 'GET',
     url: 'https://www.alphavantage.co/query',
     qs:
-     { function: 'TIME_SERIES_MONTHLY',
+     { function: 'TIME_SERIES_DAILY',
        symbol: req.body.post,
        apikey: 'M88X3Y65YYJRDM0I' }};
 

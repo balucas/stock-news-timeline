@@ -8,6 +8,7 @@ class App extends Component {
     response: '',
     post: '',
     responseToPost: '',
+    dates: ''
   };
 
   componentDidMount() {
@@ -25,23 +26,33 @@ class App extends Component {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ post: 'SPY' }),
+      body: JSON.stringify({ post: 'MSFT' }),
     });
     const body = await response.text();
     debugger;
-    var tsdata = JSON.parse(body)['Monthly Time Series'];
+    var tsdata = JSON.parse(body)['Time Series (Daily)'];
 
+    //raw json processing
     let keys = Object.keys(tsdata);
 
     var tsarray = [];
+    var darray = [];
     keys.forEach(currDate => {
       let ts = tsdata[currDate];
-      var data = ts;
-      data.date = currDate;
+      var data = {};
+      data.date = new Date(currDate);
+      data.open = ts['1. open'];
+      data.high = ts['2. high'];
+      data.low = ts['3. low'];
+      data.close = ts['4. close'];
+
       tsarray.push(data);
+      darray.push(data.date);
     });
 
-    this.setState({ responseToPost: JSON.stringify(tsarray.reverse()) });
+    debugger;
+    this.setState({ responseToPost:tsarray.reverse(),
+                    dates: darray});
     //TEST END
   };
 
@@ -82,7 +93,8 @@ render() {
     }else{
       return(
         <div className="App">
-          <TSDailyGraph data={JSON.parse(this.state.responseToPost)}/>
+          <TSDailyGraph data={this.state.responseToPost}
+                        dates={this.state.dates}/>
         </div>
       )
     }
