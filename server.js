@@ -31,11 +31,13 @@ app.post('/api/timeseries', (req, res) => {
 
 app.post('/api/news', (req, res) => {
   var request = require('request');
+  var post = req.body.post.split('&');
+  console.log((new Date (post[1])).toISOString());
   var options = { method: 'GET',
     url: 'https://newsapi.org/v2/everything',
     qs:
-     { q: req.body.q,
-       to: req.body.to,
+     { q: post[0],
+       to: (new Date(post[1])).toISOString(),
        sortBy: 'publishedAt',
        language: 'en',
        apikey: 'f235bf3e59564835ac93d2f349c50c4c' }};

@@ -8,11 +8,14 @@ class TSDailyGraph extends Component {
   state = {
       data: this.props.data,
       dates: this.props.dates,
+      meta: this.props.meta,
       max: '',
       min: '',
 
       selectedDataPoint: '',
-      clickedDataPoint: ''
+      clickedDataPoint: false,
+
+      newsData: []
   };
 
   constructor(props){
@@ -37,21 +40,37 @@ class TSDailyGraph extends Component {
                       selectedDataPoint: defaultCurr})
   }
 
-  renderTooltip(event){
+  updateInfo(event){
     const index = Array.prototype.indexOf.call(event.target.parentElement.parentElement.childNodes, event.target.parentElement)
     const currData = this.state.data[index];
     this.setState({selectedDataPoint:currData});
-
-    debugger;
   }
 
   onClickDatapoint(event){
+    this.setState({clickedDataPoint:true});
+    this.callApiNews();
+  }
 
+
+  callApiNews = async () => {
+      const response = await fetch('/api/news', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({post: this.state.meta['2. Symbol'] + '&' + this.state.selectedDataPoint.date
+                            }),
+      });
+      const body = await response.text();
+      var newsData = JSON.parse(body);
+      debugger;
+
+      this.setState({newsData: newsData.articles});
   }
 
   getCurrDatapointTime(){
     var date = this.state.selectedDataPoint.date;
-    return date.getMonth() + '/' + date.getDate() + ' - ' + date.getHours() + ':' + date.getMinutes();
+    return (date.getMonth() + 1) + '/' + date.getDate() + ' - ' + date.getHours() + ':' + date.getMinutes();
   }
 
   render(){
@@ -101,8 +120,8 @@ class TSDailyGraph extends Component {
                     target: "data",
                     eventHandlers: {
                       onMouseOver: (event) => {
-                        if(this.state.clickedDataPoint === ''){
-                          this.renderTooltip(event);
+                        if(this.state.clickedDataPoint === false){
+                          this.updateInfo(event);
                         }
                       },
 
@@ -115,24 +134,42 @@ class TSDailyGraph extends Component {
               </VictoryChart>
             </div>
             <div class="infoContainer" style={infoStyle}>
-              <h1 class="d">
+              <h2 class="d" style={headerStyle}>
                 {this.state.selectedDataPoint.date ? this.getCurrDatapointTime(): ''}
-              </h1>
-              <h2 class="o" style={h2Style}>
-                {'Open: ' + this.state.selectedDataPoint.open}
               </h2>
-              <h2 class="h" style={h2Style}>
-                {'High: ' + this.state.selectedDataPoint.high}
-              </h2>
-              <h2 class="l" style={h2Style}>
-                {'Low: ' + this.state.selectedDataPoint.low}
-              </h2>
-              <h2 class="c" style={h2Style}>
-                {'Close: ' + this.state.selectedDataPoint.close}
-              </h2>
-
+              <table class="header" style={headerStyle}>
+                <tr>
+                  <th></th>
+                  <th></th>
+                </tr>
+                <tr>
+                  <th>Open:</th>
+                  <th>{this.state.selectedDataPoint.open}</th>
+                </tr>
+                <tr>
+                  <th>High:</th>
+                  <th>{this.state.selectedDataPoint.high}</th>
+                </tr>
+                <tr>
+                  <th>Low:</th>
+                  <th>{this.state.selectedDataPoint.low}</th>
+                </tr>
+                <tr>
+                  <th>Close:</th>
+                  <th>{this.state.selectedDataPoint.close}</th>
+                </tr>
+              </table>
               <div class="newsContainer" style={newsStyle}>
-
+                {this.state.newsData.map(
+                    (comp, i) => {
+                      return(
+                              <div class="news">
+                                <h3><a href={comp.url}>{comp.title}</a></h3>
+                                <h4 style={{color:'gray'}}>{comp.source.name}</h4>
+                                <p>{comp.description}</p>
+                              </div>
+                            )
+                    })}
               </div>
 
             </div>
@@ -144,6 +181,10 @@ class TSDailyGraph extends Component {
 var containerStyle = {
   width: '85%',
   float: 'left'
+}
+
+var headerStyle = {
+  marginLeft: 15
 }
 
 var infoStyle = {
@@ -162,7 +203,7 @@ var newsStyle = {
   marginRight: 40,
   marginTop: 10,
   padding: 10,
-  borderStyle: 'solid'
+  overflow: 'scroll'
 }
 
 var h2Style = {

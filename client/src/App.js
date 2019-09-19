@@ -26,11 +26,13 @@ class App extends Component {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ post: 'BYND', type: 'timeseries' }),
+      body: JSON.stringify({ post: 'AMZN', type: 'timeseries' }),
     });
     const body = await response.text();
+    debugger;
     var tsdata = JSON.parse(body)['Time Series (60min)'];
-
+    var meta = JSON.parse(body)['Meta Data'];
+    debugger;
     //raw json processing
     let keys = Object.keys(tsdata);
 
@@ -41,7 +43,6 @@ class App extends Component {
     keys.forEach(currDate => {
       let ts = tsdata[currDate];
       var data = {};
-      debugger;
 
       data.index = counter + currDate;
       counter--;
@@ -56,11 +57,21 @@ class App extends Component {
       darray.push(data.date);
     });
 
-    debugger;
     this.setState({ responseToPost:tsarray.reverse(),
-                    dates: darray});
+                    dates: darray,
+                    meta: meta});
     //TEST END
   };
+
+  callApiNews = async () => {
+    const response = await fetch('/api/timeseries', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ post: 'BYND', type: 'timeseries' }),
+    });
+  }
 
   handleSubmit = async e => {
     e.preventDefault();
@@ -100,7 +111,8 @@ render() {
       return(
         <div className="App">
           <TSDailyGraph data={this.state.responseToPost}
-                        dates={this.state.dates}/>
+                        dates={this.state.dates}
+                        meta={this.state.meta}/>
         </div>
       )
     }
