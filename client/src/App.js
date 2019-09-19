@@ -29,17 +29,23 @@ class App extends Component {
       body: JSON.stringify({ post: 'MSFT' }),
     });
     const body = await response.text();
-    debugger;
-    var tsdata = JSON.parse(body)['Time Series (Daily)'];
+    var tsdata = JSON.parse(body)['Time Series (60min)'];
 
     //raw json processing
     let keys = Object.keys(tsdata);
 
     var tsarray = [];
     var darray = [];
+    var counter = keys.length;
+
     keys.forEach(currDate => {
       let ts = tsdata[currDate];
       var data = {};
+      debugger;
+
+      data.index = counter + currDate;
+      counter--;
+
       data.date = new Date(currDate);
       data.open = ts['1. open'];
       data.high = ts['2. high'];
