@@ -8,7 +8,9 @@ class App extends Component {
     response: '',
     post: '',
     responseToPost: '',
-    dates: ''
+    dates: '',
+
+    ticker: 'AMZN'
   };
 
   componentDidMount() {
@@ -21,12 +23,13 @@ class App extends Component {
 
   callApiTimeSeries = async () => {
     //TEST
+    this.setState({responseToPost: ''})
     const response = await fetch('/api/timeseries', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ post: 'AMZN', type: 'timeseries' }),
+      body: JSON.stringify({ post: this.state.ticker, type: 'timeseries' }),
     });
     const body = await response.text();
     debugger;
@@ -60,56 +63,26 @@ class App extends Component {
     this.setState({ responseToPost:tsarray.reverse(),
                     dates: darray,
                     meta: meta});
-    //TEST END
   };
-
-  callApiNews = async () => {
-    const response = await fetch('/api/timeseries', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ post: 'BYND', type: 'timeseries' }),
-    });
+  handleChange = (e) => {
+    this.setState({ticker: e.target.value});
+    debugger;
   }
-
-  handleSubmit = async e => {
-    e.preventDefault();
-    const response = await fetch('/api/timeseries', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ post: this.state.post }),
-    });
-    const body = await response.text();
-
-    this.setState({ responseToPost: body });
-  };
-
 render() {
     if(this.state.responseToPost === ''){
       return (
         <div className="App">
-          <header className="App-header">
-            <p>
-            <form onSubmit={this.handleSubmit}>
-              <input
-                type="text"
-                value={this.state.post}
-                onChange={e => this.setState({ post: e.target.value })}
-              />
-              <button type="submit">Submit</button>
-            </form>
-              Edit <code>src/App.js</code> and dont save to reload.
-            </p>
-          </header>
-          <p>{this.state.response}</p>
+          Loading
         </div>
       );
     }else{
       return(
         <div className="App">
+          <div className="searchBar" style={searchBarStyle}>
+            <form onSubmit={this.callApiTimeSeries.bind(this)}>
+              <h2>Ticker: <input type="text" name="ticker" value={this.state.ticker} onChange={this.handleChange}/></h2>
+            </form>
+          </div>
           <TSDailyGraph data={this.state.responseToPost}
                         dates={this.state.dates}
                         meta={this.state.meta}/>
@@ -117,6 +90,14 @@ render() {
       )
     }
   }
+}
+
+var searchBarStyle = {
+  position: 'absolute',
+  display: 'block',
+  top: 120,
+  left: '40%',
+  zIndex: 1,
 }
 
 export default App;

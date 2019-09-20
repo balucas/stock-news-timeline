@@ -70,7 +70,18 @@ class TSDailyGraph extends Component {
 
   getCurrDatapointTime(){
     var date = this.state.selectedDataPoint.date;
-    return (date.getMonth() + 1) + '/' + date.getDate() + ' - ' + date.getHours() + ':' + date.getMinutes();
+    return (date.getMonth() + 1) + '/' + date.getDate() + ' - ' + date.toTimeString().replace(/.*(\d{2}:\d{2}:\d{2}).*/, "$1");
+;
+  }
+
+  resetDatapoint(){
+    var defaultCurr = {};
+    defaultCurr.open = '0.00';
+    defaultCurr.high = '0.00';
+    defaultCurr.low = '0.00';
+    defaultCurr.close = '0.00';
+    defaultCurr.date = new Date();
+    this.setState({selectedDataPoint: defaultCurr, clickedDataPoint: false, newsData: []});
   }
 
   render(){
@@ -159,12 +170,13 @@ class TSDailyGraph extends Component {
                   <th>{this.state.selectedDataPoint.close}</th>
                 </tr>
               </table>
+              <button class="resetButton" onClick={this.resetDatapoint.bind(this)} style={{marginLeft: 15}}>Reset</button>
               <div class="newsContainer" style={newsStyle}>
                 {this.state.newsData.map(
                     (comp, i) => {
                       return(
                               <div class="news">
-                                <h3><a href={comp.url}>{comp.title}</a></h3>
+                                <h3><a style={{color: 'inherit'}} href={comp.url}>{comp.title}</a></h3>
                                 <h4 style={{color:'gray'}}>{comp.source.name}</h4>
                                 <p>{comp.description}</p>
                               </div>
@@ -178,13 +190,21 @@ class TSDailyGraph extends Component {
   }
 }
 
+var resetStyle = {
+  backgroundColor: 'lightgray',
+  fontFamily: 'inherit',
+  fontWeight: 700,
+  marginLeft: 15
+}
+
 var containerStyle = {
   width: '85%',
   float: 'left'
 }
 
 var headerStyle = {
-  marginLeft: 15
+  marginLeft: 15,
+  marginBottom: 15
 }
 
 var infoStyle = {
@@ -195,7 +215,8 @@ var infoStyle = {
   width: '20%',
   height: '100%',
   textAlign: 'left',
-  paddingTop: 150
+  paddingTop: 150,
+  marginLeft: -40
 }
 
 var newsStyle = {
