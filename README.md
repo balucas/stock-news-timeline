@@ -2,7 +2,7 @@
 
 ![alt text](https://raw.githubusercontent.com/balucas/carbon/master/sample.png)
 
-A stock data/news application that displays historical company news. Useful for prospective investors to look at how company news affects its stock movement.
+A stock data/news application that displays historical company news. Useful for prospective investors to look at how company news affects its stock movement. Built with Node, Express, & React.
 
 ## Getting Started
 
