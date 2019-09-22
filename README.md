@@ -28,6 +28,8 @@ yarn dev
 
 Stock ticker default is 'AMZN', to change simply edit and press enter. Click on candlestick markers to retrieve news articles from that time.
 
+Ideally, the range of the time series data would be one year. But due to NewsAPI limitations, 30 days prior is the max range I could get with a free API key.
+
 ## Acknowledgments
 
 * alphavantage.co
