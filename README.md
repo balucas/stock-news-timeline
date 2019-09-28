@@ -1,4 +1,4 @@
-# Carbon
+# Stock Data & News Timeline
 
 ![alt text](https://raw.githubusercontent.com/balucas/carbon/master/sample.png)
 
